@@ -1,4 +1,4 @@
-import { OAuth2Options } from "./types/hellohq";
+import { OAuth2Options } from "./model";
 
 const {
 	CLIENT_ID: clientId,
