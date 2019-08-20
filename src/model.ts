@@ -32,6 +32,24 @@ export interface HelloHqContact {
 	UpdatedOn: string;
 }
 
-export interface ContactPersons {
-	value: HelloHqContact[];
+export interface HelloHqCompany {
+	"@odata.context": string;
+	Name: string;
+	IndustrialSector: string;
+	Description: string;
+	DebitorNumber: null;
+	CreditorNumber: null;
+	TaxId: string;
+	DefaultDeliveryConditionId: number;
+	DefaultPaymentConditionId: number;
+	Id: number;
+	CreatedBy: number;
+	UpdatedBy: number;
+	CreatedOn: string;
+	UpdatedOn: string;
+}
+
+export interface ApiListResponse<T> {
+	"@odata.context": string;
+	value: Array<T>;
 }
