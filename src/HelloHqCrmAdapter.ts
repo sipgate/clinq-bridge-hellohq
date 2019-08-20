@@ -15,14 +15,11 @@ export class HelloHqCrmAdapter implements Adapter {
 	public async getContacts(config: Config): Promise<Contact[]> {
 		const contacts = await getContacts(config);
 		const companies = await getCompanies(config);
-		// console.log({ companies });
-		return Promise.all(
-			contacts.map(c => {
-				const maybeCompany = companies.find(co => co.Id === c.CompanyId);
-				console.log(maybeCompany)
-				return mapToClinqContact(c, maybeCompany);
-			})
-		);
+		// console.log({ contacts });
+		return contacts.map(c => {
+			const maybeCompany = companies.find(co => co.Id === c.CompanyId);
+			return mapToClinqContact(c, maybeCompany);
+		});
 	}
 
 	public getOAuth2RedirectUrl(): Promise<string> {

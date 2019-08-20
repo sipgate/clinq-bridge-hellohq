@@ -13,19 +13,23 @@ function mapPhoneNumber(number: string | null, label: PhoneNumberLabel) {
 		: [];
 }
 
-export async function mapToClinqContact(contact: HelloHqContact, company?: HelloHqCompany): Promise<Contact> {
+export function mapToClinqContact(contact: HelloHqContact, company?: HelloHqCompany): Contact {
+	const { FirstName, LastName, Id, PhoneMobile, PhoneLandline } = contact;
+
+	const name = `${FirstName ? `${FirstName} ` : ""}${LastName ? LastName : ""}` || null;
+
 	return {
-		name: `${contact.FirstName} ${contact.LastName}`,
-		firstName: contact.FirstName,
-		lastName: contact.LastName,
+		name,
+		firstName: FirstName || null,
+		lastName: LastName || null,
 		email: null,
 		organization: company ? company.Name : null,
-		id: String(contact.Id),
+		id: String(Id),
 		contactUrl: null,
 		avatarUrl: null,
 		phoneNumbers: [
-			...mapPhoneNumber(contact.PhoneMobile, PhoneNumberLabel.MOBILE),
-			...mapPhoneNumber(contact.PhoneLandline, PhoneNumberLabel.WORK)
+			...mapPhoneNumber(PhoneMobile, PhoneNumberLabel.MOBILE),
+			...mapPhoneNumber(PhoneLandline, PhoneNumberLabel.WORK)
 		]
 	};
 }
