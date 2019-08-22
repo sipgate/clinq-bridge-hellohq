@@ -1,4 +1,4 @@
 import { start } from "@clinq/bridge";
-import { HelloHqCrmAdapter } from "./HelloHqCrmAdapter";
+import { HelloHqAdapter } from "./adapter";
 
-start(new HelloHqCrmAdapter());
+start(new HelloHqAdapter());

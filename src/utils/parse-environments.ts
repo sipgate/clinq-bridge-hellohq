@@ -1,10 +1,6 @@
-import { OAuth2Options } from "./model";
+import { OAuth2Options } from "../models/auth.model";
 
-const {
-	CLIENT_ID: clientId,
-	CLIENT_APP_SECRET: clientSecret,
-	REDIRECT_URI: redirectUri
-} = process.env;
+const { CLIENT_ID: clientId, CLIENT_APP_SECRET: clientSecret, REDIRECT_URI: redirectUri } = process.env;
 
 export function parseEnvironment(): OAuth2Options {
 	if (!clientId) {
