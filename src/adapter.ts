@@ -174,7 +174,7 @@ export class HelloHqAdapter implements Adapter {
 		callEvent: CallEvent,
 		locale: string
 	): Promise<void> {
-		const currentUser: HelloHqUser = await this.getCurrentUser(client, callEvent.user.email);
+		const currentUser: HelloHqUser = await this.getCurrentUser(client);
 
 		const history: ContactHistoriesTemplate = {
 			ContactOn: new Date(Number(callEvent.start)).toISOString(),
@@ -217,10 +217,8 @@ export class HelloHqAdapter implements Adapter {
 		return isGerman ? textDE : textEN;
 	}
 
-	private async getCurrentUser(client: AxiosInstance, userEmail: string): Promise<HelloHqUser> {
-		const { data }: AxiosResponse = await client.get<UserResponse>(`/Users?$filter=EMailWork eq '${userEmail}'`);
-		// TODO: check if this will work on production
-		// const { data }: AxiosResponse = await client.get<GetCompaniesResponse>("/Me");
+	private async getCurrentUser(client: AxiosInstance): Promise<HelloHqUser> {
+		const { data }: AxiosResponse = await client.get<GetCompaniesResponse>("/Me");
 		const currentUser = data.value.find(Boolean);
 		return currentUser;
 	}
@@ -247,16 +245,6 @@ export class HelloHqAdapter implements Adapter {
 		} catch (error) {
 			console.error(`Cannot find contact for phone number ${phoneNumber}: ${error.message}"`);
 			throw new ServerError(400, "Cannot find contact for phone number");
-		}
-	}
-
-	private async getContactById(anonKey: string, client: AxiosInstance, id: string): Promise<HelloHqContact> {
-		try {
-			const { data } = await client.get<ContactPerson>(`/ContactPersons(${id})?$expand=DefaultAddress,Company`);
-			return data;
-		} catch (error) {
-			console.error(`Could not fetch contact for key "${anonKey}: ${error.message}"`);
-			throw new ServerError(400, "Could not fetch contact");
 		}
 	}
 
