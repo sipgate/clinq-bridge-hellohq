@@ -35,14 +35,14 @@ export function convertToClinqContact(contact: HelloHqContact, company?: Company
 }
 
 export function convertToHelloHqContact(contact: ContactTemplate, company?: Company): HelloHqContactTemplate {
-	const PhoneLandline = contact.phoneNumbers.find(phoneNumber => phoneNumber.label === PhoneNumberLabel.WORK);
-	const PhoneMobile = contact.phoneNumbers.find(phoneNumber => phoneNumber.label === PhoneNumberLabel.MOBILE);
+	const PhoneLandline = contact.phoneNumbers.filter(phoneNumber => phoneNumber.label === PhoneNumberLabel.WORK);
+	const PhoneMobile = contact.phoneNumbers.filter(phoneNumber => phoneNumber.label === PhoneNumberLabel.MOBILE);
 
 	let helloHqContact: HelloHqContactTemplate = {
 		FirstName: contact.firstName ? contact.firstName : null,
 		LastName: contact.lastName ? contact.lastName : null,
-		PhoneLandline: PhoneLandline.phoneNumber ? PhoneLandline.phoneNumber : null,
-		PhoneMobile: PhoneMobile.phoneNumber ? PhoneMobile.phoneNumber : null
+		PhoneLandline: PhoneLandline.length ? PhoneLandline[0].phoneNumber : null,
+		PhoneMobile: PhoneMobile.length ? PhoneMobile[0].phoneNumber : null
 	};
 
 	if (contact.email) {
