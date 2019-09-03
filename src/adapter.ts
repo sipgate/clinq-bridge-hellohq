@@ -13,6 +13,7 @@ import { ContactHistoriesTemplate, ContactType } from "./models/history.model";
 import { anonymizeKey, formatDuration, normalizePhoneNumber, parsePhoneNumber } from "./utils";
 import { convertToClinqContact, convertToHelloHqContact } from "./utils/mapper";
 import { parseEnvironment } from "./utils/parse-environments";
+import * as moment from "moment";
 
 const { clientId, redirectUri, clientSecret } = parseEnvironment();
 
@@ -192,7 +193,7 @@ export class HelloHqAdapter implements Adapter {
 	}
 
 	private parseCallComment({ channel, start, end, direction }: CallEvent, locale: string): string {
-		const date = new Date(Number(start));
+		const date = moment(Number(start));
 		const duration = formatDuration(Number(end) - Number(start));
 		const isGerman = locale === "de_DE";
 
@@ -201,10 +202,10 @@ export class HelloHqAdapter implements Adapter {
 
 		const textEN = `<div><strong>${directionInfo}</strong> CLINQ call in <strong>"${
 			channel.name
-		}"</strong> on ${date.getFullYear()}-${date.getMonth()}-${date.getDate()} (${duration})<div>`;
+		}"</strong> on ${date.format("YYYY-MM-DD")} (${duration})<div>`;
 		const textDE = `<div><strong>${directionInfo}</strong> CLINQ Anruf in <strong>"${
 			channel.name
-		}"</strong> am ${date.getDate()}.${date.getMonth()}.${date.getFullYear()} (${duration})<div>`;
+		}"</strong> am ${date.format("DD.MM.YYYY")} (${duration})<div>`;
 
 		return isGerman ? textDE : textEN;
 	}
