@@ -161,6 +161,8 @@ export class HelloHqAdapter implements Adapter {
 				return;
 			}
 
+			console.log(`Save CallEvent for ${anonKey}`);
+
 			await this.createContactHistory(client, contact, callEvent, config.locale);
 		} catch (error) {
 			console.error(`Could not save CallEvent for ${phoneNumber} for key "${anonKey}: ${error.message}"`);
