@@ -114,11 +114,8 @@ export class HelloHqAdapter implements Adapter {
 		let company = null;
 
 		try {
-			const helloHqContact: HelloHqContact = await this.getContactById(anonKey, client, id);
-			if (updatedContact.organization && !helloHqContact.CompanyId) {
+			if (updatedContact.organization) {
 				company = await this.getOrCreateCompany(anonKey, client, updatedContact.organization);
-			} else if (updatedContact.organization && updatedContact.organization !== helloHqContact.Company.Name) {
-				company = await this.updateCompany(anonKey, client, updatedContact.organization, helloHqContact.CompanyId);
 			}
 
 			const updatedHelloHqContact = convertToHelloHqContact(updatedContact, company);
