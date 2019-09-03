@@ -13,7 +13,6 @@ export interface HelloHqUser {
 	UpdatedOn: string;
 }
 
-export interface UserResponse {
-	"@odata.count": number;
-	value: HelloHqUser[];
+export interface MeUserResponse extends HelloHqUser {
+	"@odata.context": string;
 }

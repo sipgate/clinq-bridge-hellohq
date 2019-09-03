@@ -7,8 +7,8 @@ import * as uuid from "uuid/v4";
 import { API_BASE_URL, createClient } from "./api";
 import { AuthResponse } from "./models/auth.model";
 import { Company, CreateCompanyResponse, GetCompaniesResponse, UpdateCompanyResponse } from "./models/company.model";
-import { ContactPerson, ContactPersons, HelloHqContact } from "./models/contact.model";
-import { HelloHqUser, UserResponse } from "./models/helloHqUser.model";
+import { ContactPersons, HelloHqContact } from "./models/contact.model";
+import { HelloHqUser, MeUserResponse } from "./models/helloHqUser.model";
 import { ContactHistoriesTemplate, ContactType } from "./models/history.model";
 import { anonymizeKey, formatDuration, normalizePhoneNumber, parsePhoneNumber } from "./utils";
 import { convertToClinqContact, convertToHelloHqContact } from "./utils/mapper";
@@ -220,9 +220,8 @@ export class HelloHqAdapter implements Adapter {
 	}
 
 	private async getCurrentUser(client: AxiosInstance): Promise<HelloHqUser> {
-		const { data }: AxiosResponse = await client.get<GetCompaniesResponse>("/Me");
-		const currentUser = data.value.find(Boolean);
-		return currentUser;
+		const { data }: AxiosResponse<HelloHqUser> = await client.get<MeUserResponse>("/Me");
+		return data;
 	}
 
 	private async getContactByPhoneNumber(client: AxiosInstance, phoneNumber: string): Promise<HelloHqContact> {
