@@ -228,17 +228,19 @@ export class HelloHqAdapter implements Adapter {
 	private async getContactByPhoneNumber(client: AxiosInstance, phoneNumber: string): Promise<HelloHqContact> {
 		try {
 			const parsedPhoneNumber = parsePhoneNumber(phoneNumber);
+			const filterString = `contains(PhoneLandline, '${phoneNumber}') or contains(PhoneMobile, '${phoneNumber}') or contains(PhoneLandline, '${
+				parsedPhoneNumber.localized
+			}') or contains(PhoneMobile, '${parsedPhoneNumber.localized}') or contains(PhoneLandline, '${
+				parsedPhoneNumber.e164
+			}') or contains(PhoneMobile, '${parsedPhoneNumber.e164}') or contains(PhoneLandline, '${normalizePhoneNumber(
+				parsedPhoneNumber.e164
+			)}') or contains(PhoneMobile, '${normalizePhoneNumber(parsedPhoneNumber.e164)}')`;
+
 			const { data } = await client.get<ContactPersons>(
-				`/ContactPersons?$expand=DefaultAddress,Company&$filter=contains(PhoneLandline, '${phoneNumber}') or contains(PhoneMobile, '${phoneNumber}') or contains(PhoneLandline, '${
-					parsedPhoneNumber.localized
-				}') or contains(PhoneMobile, '${parsedPhoneNumber.localized}') or contains(PhoneLandline, '${
-					parsedPhoneNumber.e164
-				}') or contains(PhoneMobile, '${parsedPhoneNumber.e164}') or contains(PhoneLandline, '${normalizePhoneNumber(
-					parsedPhoneNumber.e164
-				)}') or contains(PhoneMobile, '${normalizePhoneNumber(parsedPhoneNumber.e164)}')`
+				`/ContactPersons?$expand=DefaultAddress,Company&$filter=${encodeURI(filterString)}`
 			);
 
-			if (!data.value) {
+			if (!data.value.length) {
 				console.error(`Cannot find contact for phone number ${phoneNumber}`);
 			}
 			const contact = data.value.find(Boolean);
