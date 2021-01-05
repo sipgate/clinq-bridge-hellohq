@@ -19,7 +19,7 @@
 	},
 	"dependencies": {
 		"@clinq/bridge": "^10.1.2",
-		"axios": "^0.19.0",
+		"axios": "^0.21.1",
 		"base-64": "^0.1.0",
 		"moment": "^2.24.0",
 		"querystring": "^0.2.0",
