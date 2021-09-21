@@ -2,8 +2,7 @@ import { Adapter, CallDirection, CallEvent, Config, Contact, ContactTemplate, Se
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import * as encode64 from "base-64";
 import { Request } from "express";
-import * as querystring from "querystring";
-import * as uuid from "uuid/v4";
+import { v4 as uuid } from "uuid";
 import { API_BASE_URL, createClient } from "./api";
 import { AuthResponse } from "./models/auth.model";
 import { Company, CreateCompanyResponse, GetCompaniesResponse, UpdateCompanyResponse } from "./models/company.model";
@@ -28,25 +27,24 @@ export class HelloHqAdapter implements Adapter {
 
 	public async handleOAuth2Callback(req: Request): Promise<{ apiKey: string; apiUrl: string }> {
 		const { code } = req.query;
-		const formData = querystring.stringify({
-			redirect_uri: redirectUri,
-			grant_type: "authorization_code",
-			code: code
-		});
+		const formData = new URLSearchParams();
+		formData.set("redirect_uri", redirectUri);
+		formData.set("grant_type", "authorization_code");
+		formData.set("code", code.toString());
 
 		const {
-			data: { access_token, refresh_token }
-		}: AxiosResponse = await axios.post<AuthResponse>(`${API_BASE_URL}/Token`, formData, {
+			data: { access_token, refresh_token },
+		}: AxiosResponse = await axios.post<AuthResponse>(`${API_BASE_URL}/Token`, formData.toString(), {
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
-				Authorization: `Basic ${encode64.encode(`${clientId}:${clientSecret}`)}`
-			}
+				Authorization: `Basic ${encode64.encode(`${clientId}:${clientSecret}`)}`,
+			},
 		});
 
 		const resp = {
 			apiKey: `${access_token}:${refresh_token}`,
 			apiUrl: "",
-			locale: ""
+			locale: "",
 		};
 
 		return resp;
@@ -74,7 +72,7 @@ export class HelloHqAdapter implements Adapter {
 			`/ContactPersons?$expand=DefaultAddress,Company&$orderby=Id asc&$count=true&$skip=${skip}`
 		);
 
-		const contacts = data.value.map(val => convertToClinqContact(val));
+		const contacts = data.value.map((val) => convertToClinqContact(val));
 		const mergedContacts = [...accumulated, ...contacts];
 		const fetchedContacts = mergedContacts.length;
 		const more = Boolean(fetchedContacts < Number(data["@odata.count"]));
@@ -186,7 +184,7 @@ export class HelloHqAdapter implements Adapter {
 			ContactType: locale === "de_DE" ? ContactType.TELEFON : ContactType.PHONE,
 			UserId: currentUser.Id,
 			CompanyId: contact.CompanyId ? contact.CompanyId : null,
-			ContactPersonId: contact.Id
+			ContactPersonId: contact.Id,
 		};
 
 		const response: AxiosResponse = await client.post("/ContactHistories", history);
@@ -266,7 +264,7 @@ export class HelloHqAdapter implements Adapter {
 			}
 
 			const { data: createdResponse }: AxiosResponse = await client.post<CreateCompanyResponse>("/Companies", {
-				Name: companyName
+				Name: companyName,
 			});
 			console.log(`New company created for ${anonKey}`);
 			return createdResponse;
@@ -286,7 +284,7 @@ export class HelloHqAdapter implements Adapter {
 			const { data: updateCompaniesResponse }: AxiosResponse = await client.put<UpdateCompanyResponse>(
 				`/Companies(${companyId})`,
 				{
-					Name: companyName
+					Name: companyName,
 				}
 			);
 			const company = updateCompaniesResponse.value;
